@@ -1,0 +1,21 @@
+{
+  "name": "hands-on-http",
+  "version": "1.0.0",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node --env-file=.env app.js",
+    "dev": "nodemon --env-file=.env app.js"
+  },
+  "author": "Ahmad Mu'min Faisal",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "express": "^4.19.2",
+    "express-validator": "^7.2.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.4"
+  }
+}
