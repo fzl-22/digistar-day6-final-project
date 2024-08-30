@@ -1,4 +1,5 @@
 const { validationResult } = require("express-validator");
+const getUniqueId = require("../util/uuid");
 
 let users = [];
 
@@ -93,7 +94,7 @@ const createUser = (req, res, next) => {
       throw error;
     }
 
-    const id = new Date().toISOString();
+    const id = getUniqueId();
     const user = {
       id: id,
       name: name,
