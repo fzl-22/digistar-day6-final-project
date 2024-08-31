@@ -1,8 +1,6 @@
-import bcrypt from "bcryptjs";
 import { validationResult } from "express-validator";
 import { NextFunction, Request, Response } from "express";
 import { HttpError } from "../../core/errors";
-import { User } from "../../domain/models/user";
 import { UserUsecase } from "../../domain/usecases/user.usecase";
 
 const getUsers = (req: Request, res: Response, next: NextFunction) => {
@@ -45,7 +43,6 @@ const getUserById = (req: Request, res: Response, next: NextFunction) => {
     const params = req.params as GetUserByIdParams;
     const userId = params.userId;
 
-    // if user does not exist, throw error
     const user = UserUsecase.getUserById(userId);
 
     res.status(200).json({
@@ -84,7 +81,7 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
 
 type EditUserParams = { userId: string };
 type EditUserBody = { name?: string; email?: string };
-const editUser = (req: Request, res: Response, next: NextFunction) => {
+const updateUser = (req: Request, res: Response, next: NextFunction) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -135,6 +132,6 @@ export default {
   searchUsers,
   getUserById,
   createUser,
-  editUser,
+  updateUser,
   deleteUser,
 };

@@ -20,7 +20,7 @@ router.post("/users", validators.validateCreateUser(), controllers.createUser);
 router.put(
   "/users/:userId",
   validators.validateUpdateUser(),
-  controllers.editUser
+  controllers.updateUser
 );
 
 router.delete(

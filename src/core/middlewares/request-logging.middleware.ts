@@ -7,7 +7,7 @@ const requestLoggingMiddleware = (
   next: NextFunction
 ) => {
   const { method, url, body } = req;
-  printPretty("info", `REQ: ${method} ${url}`, `BODY: ${body}`);
+  printPretty("info", `REQ: ${method} ${url}`, `BODY: ${JSON.stringify(body) }`);
   next();
 };
 
