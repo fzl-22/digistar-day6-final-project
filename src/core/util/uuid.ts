@@ -1,4 +1,4 @@
-import { v4 as uuidv4 } from "uuid";
+import { v7 as uuidv7 } from "uuid";
 
 interface GetUniqueIdParams {
   prefix?: string;
@@ -9,7 +9,7 @@ const getUniqueId = ({
   prefix = "",
   delimiter = "-",
 }: GetUniqueIdParams = {}): string => {
-  const uuid = uuidv4();
+  const uuid = uuidv7();
   return prefix ? `${prefix}${delimiter}${uuid}` : uuid;
 };
 
