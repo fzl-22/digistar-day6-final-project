@@ -55,6 +55,13 @@ export class UserUsecase {
   }
 
   static updateUser(userId: string, name?: string, email?: string): User {
+    if (email) {
+      const userWithDuplicateEmail = userRepository.findByEmail(email);
+      if (userWithDuplicateEmail && userWithDuplicateEmail.id !== userId) {
+        throw new HttpError(409, "Email already exist. Aborting");
+      }
+    }
+
     const updatedUser = userRepository.update(userId, { name, email });
     if (!updatedUser) {
       throw new HttpError(404, "User not found.");
