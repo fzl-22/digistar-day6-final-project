@@ -82,7 +82,7 @@ export class UserUsecase {
       email: userData.email,
     });
     if (!updatedUser) {
-      throw new HttpError(404, "User not found.");
+      throw new HttpError(400, "Failed to update user.");
     }
     return updatedUser;
   }
@@ -90,7 +90,7 @@ export class UserUsecase {
   static async deleteUser(userId: string): Promise<boolean> {
     const isDeleted = await userRepository.delete(userId);
     if (!isDeleted) {
-      throw new HttpError(404, "User not found.");
+      throw new HttpError(400, "Failed to delete user.");
     }
 
     return isDeleted;

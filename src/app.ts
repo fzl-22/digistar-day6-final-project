@@ -1,12 +1,14 @@
 import express from "express";
 import bodyParser from "body-parser";
+import mongoose from "mongoose";
+import printPretty from "digistar-hacker-faisal";
 
-import routes from "./routes";
+import mainRoutes from "./routes/main.routes";
+import userRoutes from "./routes/user.routes";
+import roleRoutes from "./routes/role.routes";
 import errorHandlingMiddleware from "./core/middlewares/error-handling.middleware";
 import { PORT, HOST, MONGODB_URL } from "./core/config/env";
-import printPretty from "digistar-hacker-faisal";
 import requestLoggingMiddleware from "./core/middlewares/request-logging.middleware";
-import mongoose from "mongoose";
 
 const app = express();
 
@@ -14,7 +16,9 @@ app.use(bodyParser.json());
 
 app.use(requestLoggingMiddleware);
 
-app.use(routes);
+app.use(mainRoutes);
+app.use("/users", userRoutes);
+app.use("/roles", roleRoutes);
 
 app.use(errorHandlingMiddleware);
 

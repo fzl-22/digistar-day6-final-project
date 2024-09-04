@@ -1,16 +1,16 @@
 import { Router } from "express";
 
-import controllers from "../handlers/controllers";
-import validators from "../handlers/validators";
+import controllers from "../handlers/controllers/user.controller";
+import validators from "../handlers/validators/user.validator";
 
 const router = Router();
 
 router.get("/", controllers.getUsers);
 
-router.get("/users/search", controllers.searchUsers);
+router.get("/search", controllers.searchUsers);
 
 router.get(
-  "/users/:userId",
+  "/:userId",
   validators.validateGetUserById(),
   controllers.getUserById
 );
@@ -18,13 +18,13 @@ router.get(
 router.post("/users", validators.validateCreateUser(), controllers.createUser);
 
 router.put(
-  "/users/:userId",
+  "/:userId",
   validators.validateUpdateUser(),
   controllers.updateUser
 );
 
 router.delete(
-  "/users/:userId",
+  "/:userId",
   validators.validateDeleteUser(),
   controllers.deleteUser
 );

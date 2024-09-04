@@ -131,6 +131,7 @@ const updateUser =  async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
+type DeleteUserParams = { userId: string }
 const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const errors = validationResult(req);
@@ -139,7 +140,7 @@ const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
       throw error;
     }
 
-    const userId = req.params.userId;
+    const { userId } = req.params as DeleteUserParams;
 
     await UserUsecase.deleteUser(userId);
 

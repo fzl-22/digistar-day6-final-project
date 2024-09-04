@@ -49,7 +49,7 @@ class UserRepository {
 
   async add(userData: Partial<UserDocument>): Promise<UserDocument> {
     const user = new User(userData);
-    return user.save();
+    return await user.save();
   }
 
   async update(
