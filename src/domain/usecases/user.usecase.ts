@@ -1,29 +1,23 @@
 import bcrypt from "bcryptjs";
 import { HttpError } from "../../core/errors";
-import { User } from "../models/user";
+import { UserDocument } from "../models/user";
 import { userRepository } from "../repositories/user.repository";
 
 export class UserUsecase {
-  static getUsers(): User[] {
-    return userRepository.findAll();
+  static async getUsers(): Promise<UserDocument[]> {
+    return await userRepository.findAll();
   }
 
-  static searchUsers(name?: string, email?: string): User[] {
-    if (!name && !email) {
-      return userRepository.findAll(); // Return all users if both name and email are not provided
-    }
-
-    return userRepository
-      .findAll()
-      .filter(
-        (user) =>
-          (name && user.name.toLowerCase().includes(name.toLowerCase())) ||
-          (email && user.email.toLowerCase().includes(email.toLowerCase()))
-      );
+  static async searchUsers(
+    username?: string,
+    email?: string
+  ): Promise<UserDocument[]> {
+    const users = await userRepository.search(username, email);
+    return users;
   }
 
-  static getUserById(userId: string): User {
-    const user = userRepository.findById(userId);
+  static async getUserById(userId: string): Promise<UserDocument> {
+    const user = await userRepository.findById(userId);
     if (!user) {
       throw new HttpError(404, "User not found.");
     }
@@ -31,46 +25,70 @@ export class UserUsecase {
   }
 
   static async createUser(
-    name: string,
+    username: string,
     email: string,
     password: string
-  ): Promise<User> {
-    const emailExists = userRepository.findByEmail(email);
-    if (emailExists) {
+  ): Promise<UserDocument> {
+    const isUserExists = await userRepository.isUserExists(username, email);
+    if (isUserExists) {
       throw new HttpError(
         409,
-        "Email already exists. Please use another email."
+        "Email or username already exists. Please use another email or username."
       );
     }
 
     const hashedPassword = await bcrypt.hash(password, 12);
-    const user = new User({
-      name: name,
+    const user = await userRepository.add({
+      username: username,
       email: email,
       password: hashedPassword,
     });
 
-    userRepository.add(user);
     return user;
   }
 
-  static updateUser(userId: string, name?: string, email?: string): User {
-    if (email) {
-      const userWithDuplicateEmail = userRepository.findByEmail(email);
-      if (userWithDuplicateEmail && userWithDuplicateEmail.id !== userId) {
-        throw new HttpError(409, "Email already exist. Aborting");
+  static async updateUser(
+    userId: string,
+    userData: { username?: string; email?: string }
+  ): Promise<UserDocument> {
+    const isUserExists = await userRepository.findById(userId);
+    if (!isUserExists) {
+      throw new HttpError(404, "User not found.");
+    }
+
+    if (userData.email) {
+      const userWithDuplicateEmail = await userRepository.findByEmail(
+        userData.email
+      );
+      if (userWithDuplicateEmail && userWithDuplicateEmail.userId !== userId) {
+        throw new HttpError(409, "Email already exists. Aborting.");
       }
     }
 
-    const updatedUser = userRepository.update(userId, { name, email });
+    if (userData.username) {
+      const userWithDuplicateUsername = await userRepository.findByUsername(
+        userData.username
+      );
+      if (
+        userWithDuplicateUsername &&
+        userWithDuplicateUsername.userId !== userId
+      ) {
+        throw new HttpError(409, "Username already exists. Aborting.");
+      }
+    }
+
+    const updatedUser = await userRepository.update(userId, {
+      username: userData.username,
+      email: userData.email,
+    });
     if (!updatedUser) {
       throw new HttpError(404, "User not found.");
     }
     return updatedUser;
   }
 
-  static deleteUser(userId: string): boolean {
-    const isDeleted = userRepository.delete(userId);
+  static async deleteUser(userId: string): Promise<boolean> {
+    const isDeleted = await userRepository.delete(userId);
     if (!isDeleted) {
       throw new HttpError(404, "User not found.");
     }

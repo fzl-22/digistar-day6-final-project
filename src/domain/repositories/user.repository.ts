@@ -1,42 +1,67 @@
-import { User } from "../models/user";
+import { UpdateQuery } from "mongoose";
+import { User, UserDocument } from "../models/user";
 
 class UserRepository {
-  private users: User[] = [];
-
-  findAll(): User[] {
-    return this.users;
+  async findAll(): Promise<UserDocument[]> {
+    const users = await User.find();
+    return users;
   }
 
-  findById(userId: string): User | undefined {
-    return this.users.find((user) => user.id === userId);
+  async findById(userId: string): Promise<UserDocument | null> {
+    const user = await User.findOne({ userId: userId });
+    return user;
   }
 
-  findByEmail(email: string): User | undefined {
-    return this.users.find((user) => user.email === email);
+  async findByEmail(email: string): Promise<UserDocument | null> {
+    const user = await User.findOne({ email: email });
+    return user;
   }
 
-  add(user: User): void {
-    this.users.push(user);
+  async findByUsername(username: string): Promise<UserDocument | null> {
+    const user = await User.findOne({ username: username });
+    return user;
   }
 
-  update(userId: string, updatedUser: Partial<User>): User | undefined {
-    const index = this.users.findIndex((user) => user.id === userId);
-    if (index === -1) {
-      return undefined;
+  async isUserExists(username: string, email: string): Promise<boolean> {
+    const user = await User.findOne({
+      $or: [{ username: username }, { email: email }],
+    });
+    return !!user;
+  }
+
+  async search(username?: string, email?: string): Promise<UserDocument[]> {
+    const queryConditions: any[] = [];
+
+    if (username) {
+      queryConditions.push({ username: { $regex: new RegExp(username, "i") } });
     }
 
-    this.users[index].update(updatedUser);
-    return this.users[index];
-  }
-
-  delete(userId: string): boolean {
-    const index = this.users.findIndex((user) => user.id === userId);
-    if (index === -1) {
-      return false;
+    if (email) {
+      queryConditions.push({ email: { $regex: new RegExp(email, "i") } });
     }
 
-    this.users.splice(index, 1);
-    return true;
+    if (queryConditions.length === 0) {
+      return [];
+    }
+
+    return await User.find({ $or: queryConditions });
+  }
+
+  async add(userData: Partial<UserDocument>): Promise<UserDocument> {
+    const user = new User(userData);
+    return user.save();
+  }
+
+  async update(
+    userId: string,
+    updatedUser: UpdateQuery<UserDocument>
+  ): Promise<UserDocument | null> {
+    return await User.findOneAndUpdate({ userId }, updatedUser, { new: true });
+  }
+
+  async delete(userId: string): Promise<boolean> {
+    const result = await User.deleteOne({ userId: userId });
+    return result.deletedCount > 0;
   }
 }
 

@@ -3,9 +3,10 @@ import bodyParser from "body-parser";
 
 import routes from "./routes";
 import errorHandlingMiddleware from "./core/middlewares/error-handling.middleware";
-import { PORT, HOST } from "./core/config/env";
+import { PORT, HOST, MONGODB_URL } from "./core/config/env";
 import printPretty from "digistar-hacker-faisal";
 import requestLoggingMiddleware from "./core/middlewares/request-logging.middleware";
+import mongoose from "mongoose";
 
 const app = express();
 
@@ -17,6 +18,13 @@ app.use(routes);
 
 app.use(errorHandlingMiddleware);
 
-app.listen(PORT, HOST, () => {
-  printPretty("debug", `Server is running on http://${HOST}:${PORT}`);
-});
+mongoose
+  .connect(MONGODB_URL)
+  .then(() => {
+    app.listen(PORT, HOST, () => {
+      printPretty("debug", `Server is running on http://${HOST}:${PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.log(err);
+  });

@@ -8,7 +8,7 @@ const validateGetUserById = () => {
 
 const validateCreateUser = () => {
   return [
-    body("name").trim().notEmpty().withMessage("Name is required"),
+    body("username").trim().notEmpty().withMessage("Name is required"),
     body("email").trim().isEmail().withMessage("Invalid email"),
   ];
 };
@@ -16,7 +16,7 @@ const validateCreateUser = () => {
 const validateUpdateUser = () => {
   return [
     param("userId").trim().notEmpty().withMessage("Invalid user ID"),
-    body("name").optional().trim(),
+    body("username").optional().trim(),
     body("email").optional().trim().isEmail(),
   ];
 };
