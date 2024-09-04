@@ -22,8 +22,33 @@ const validateDeleteRole = () => {
   ];
 };
 
+const validateAssignRole = () => {
+  return [
+    param("userId")
+      .trim()
+      .notEmpty()
+      .withMessage("Role ID is required"),
+    body("roleId")
+      .trim()
+      .notEmpty()
+      .withMessage("User ID is required"),
+  ];
+}
+
+const validateRevokeRole = () => {
+  return [
+    param("userId")
+      .trim()
+      .notEmpty()
+      .withMessage("Role ID is required"),
+  ];
+}
+
+
 export default {
   validateCreateRole,
   validateUpdateRole,
   validateDeleteRole,
+  validateAssignRole,
+  validateRevokeRole,
 };

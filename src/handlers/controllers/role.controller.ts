@@ -83,9 +83,56 @@ const deleteRole = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
+type AssignRoleParams = { userId: string };
+type AssignRoleBody = { roleId: string };
+const assignRole = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      const error = new HttpError(422, "Validation error", errors.array());
+      throw error;
+    }
+
+    const { userId } = req.params as AssignRoleParams;
+    const { roleId } = req.body as AssignRoleBody;
+
+    await RoleUsecase.assignRole(userId, roleId);
+
+    return res.status(200).json({
+      message: "Role assigned successfully!",
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+type RevokeRoleParams = { userId: string };
+const revokeRole = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      const error = new HttpError(422, "Validation error", errors.array());
+      throw error;
+    }
+
+    const { userId } = req.params as RevokeRoleParams;
+
+    await RoleUsecase.revokeRole(userId);
+
+    return res.status(200).json({
+      message: "Role revoked successfully!",
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+
 export default {
   getRoles,
   createRole,
   updateRole,
   deleteRole,
+  assignRole,
+  revokeRole,
 };

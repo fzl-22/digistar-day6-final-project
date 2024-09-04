@@ -22,7 +22,7 @@ const roleSchema = new mongoose.Schema<RoleDocument>(
       unique: true,
     },
   },
-  { timestamps: true }
+  { timestamps: true, toJSON: {virtuals: true}, toObject: {virtuals: true} }
 );
 
 const Role = mongoose.model<RoleDocument>("Role", roleSchema);

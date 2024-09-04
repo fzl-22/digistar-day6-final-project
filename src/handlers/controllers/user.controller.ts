@@ -13,6 +13,7 @@ const getUsers = async (req: Request, res: Response, next: NextFunction) => {
           userId: user.userId,
           username: user.username,
           email: user.email,
+          role: user.role,
         };
       }),
     },
@@ -34,6 +35,7 @@ const searchUsers = async (req: Request, res: Response, next: NextFunction) => {
             userId: user.userId,
             username: user.username,
             email: user.email,
+            role: user.role,
           };
         }),
       },
@@ -64,6 +66,7 @@ const getUserById = async (req: Request, res: Response, next: NextFunction) => {
           userId: user.userId,
           username: user.username,
           email: user.email,
+          role: user.role,
         },
       },
     });
@@ -91,6 +94,7 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
           userId: user.userId,
           username: user.username,
           email: user.email,
+          role: user.role,
         },
       },
     });
@@ -123,6 +127,7 @@ const updateUser =  async (req: Request, res: Response, next: NextFunction) => {
           userId: user.userId,
           username: user.username,
           email: user.email,
+          role: user.role,
         },
       },
     });

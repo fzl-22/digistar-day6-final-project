@@ -1,5 +1,6 @@
 import { Role, RoleDocument } from "../models/role";
 import { UpdateQuery } from "mongoose";
+import { User } from "../models/user";
 
 class RoleRepository {
   async findAll(): Promise<RoleDocument[]> {
@@ -31,6 +32,14 @@ class RoleRepository {
   async delete(roleId: string): Promise<boolean> {
     const result = await Role.deleteOne({ roleId: roleId });
     return result.deletedCount > 0;
+  }
+
+  async assign(userId: string, roleId: string): Promise<void> {
+    await User.updateOne({ userId: userId }, { $set: { role: roleId } });
+  }
+
+  async revoke(userId: string): Promise<void> {
+    await User.updateOne({ userId: userId }, { $set: { role: null } });
   }
 }
 

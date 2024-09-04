@@ -1,6 +1,7 @@
 import { HttpError } from "../../core/errors";
 import { RoleDocument } from "../models/role";
 import { roleRepository } from "../repositories/role.repository";
+import { userRepository } from "../repositories/user.repository";
 
 export class RoleUsecase {
   static async getRoles(): Promise<RoleDocument[]> {
@@ -55,5 +56,28 @@ export class RoleUsecase {
     }
 
     return isDeleted;
+  }
+
+  static async assignRole(userId: string, roleId: string): Promise<void> {
+    const userExists = await userRepository.findById(userId);
+    if (!userExists) {
+      throw new HttpError(404, "User not found.");
+    }
+
+    const roleExists = await roleRepository.findById(roleId);
+    if (!roleExists) {
+      throw new HttpError(404, "Role not found.");
+    }
+
+    await roleRepository.assign(userId, roleId);
+  }
+
+  static async revokeRole(userId: string): Promise<void> {
+    const userExists = await userRepository.findById(userId);
+    if (!userExists) {
+      throw new HttpError(404, "User not found.");
+    }
+
+    await roleRepository.revoke(userId);
   }
 }

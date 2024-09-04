@@ -3,22 +3,22 @@ import { User, UserDocument } from "../models/user";
 
 class UserRepository {
   async findAll(): Promise<UserDocument[]> {
-    const users = await User.find();
+    const users = await User.find().populate("role");
     return users;
   }
 
   async findById(userId: string): Promise<UserDocument | null> {
-    const user = await User.findOne({ userId: userId });
+    const user = await User.findOne({ userId: userId }).populate("role");
     return user;
   }
 
   async findByEmail(email: string): Promise<UserDocument | null> {
-    const user = await User.findOne({ email: email });
+    const user = await User.findOne({ email: email }).populate("role");
     return user;
   }
 
   async findByUsername(username: string): Promise<UserDocument | null> {
-    const user = await User.findOne({ username: username });
+    const user = await User.findOne({ username: username }).populate("role");
     return user;
   }
 
@@ -44,19 +44,21 @@ class UserRepository {
       return [];
     }
 
-    return await User.find({ $or: queryConditions });
+    return await User.find({ $or: queryConditions }).populate("role");
   }
 
   async add(userData: Partial<UserDocument>): Promise<UserDocument> {
     const user = new User(userData);
-    return await user.save();
+    return (await user.save()).populate("role");
   }
 
   async update(
     userId: string,
     updatedUser: UpdateQuery<UserDocument>
   ): Promise<UserDocument | null> {
-    return await User.findOneAndUpdate({ userId }, updatedUser, { new: true });
+    return await User.findOneAndUpdate({ userId }, updatedUser, {
+      new: true,
+    }).populate("role");
   }
 
   async delete(userId: string): Promise<boolean> {

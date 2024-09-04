@@ -7,7 +7,7 @@ interface UserDocument extends Document {
   username: string;
   email: string;
   password: string;
-  role?: mongoose.Types.ObjectId | RoleDocument;
+  role?: String | RoleDocument;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -35,13 +35,25 @@ const userSchema = new mongoose.Schema<UserDocument>(
       required: true,
     },
     role: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Role",
+      type: String,
       required: false,
+      default: null,
     },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+    virtuals: true,
+  }
 );
+
+userSchema.virtual("roles", {
+  ref: "Role",
+  localField: "role",
+  foreignField: "roleId",
+  justOne: true,
+});
 
 const User = mongoose.model<UserDocument>("User", userSchema);
 
