@@ -15,7 +15,7 @@ router.get(
   controllers.getUserById
 );
 
-router.post("/users", validators.validateCreateUser(), controllers.createUser);
+router.post("/", validators.validateCreateUser(), controllers.createUser);
 
 router.put(
   "/:userId",
