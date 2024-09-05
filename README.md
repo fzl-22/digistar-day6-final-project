@@ -4,6 +4,8 @@
 | ------------------- | ----------------- |
 | Ahmad Mu'min Faisal | Hacker Back End 9 |
 
+Recording Link: [https://bit.ly/digistar-2024-be4](https://bit.ly/digistar-2024-be4).
+
 ## How to run the project
 
 > This project uses TypeScript. So to run the project, it needs to be compiled to JavaScript. The `start` script is already includes the compilation script.
