@@ -18,7 +18,7 @@ const userSchema = new mongoose.Schema<UserDocument>(
       type: String,
       required: true,
       unique: true,
-      default: getUniqueId(),
+      default: () => getUniqueId(),
     },
     username: {
       type: String,

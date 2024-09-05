@@ -26,7 +26,6 @@ export class RoleUsecase {
     roleData: { rolename?: string }
   ): Promise<RoleDocument> {
     const isRoleExists = await roleRepository.findById(roleId);
-    console.log(isRoleExists);
     if (!isRoleExists) {
       throw new HttpError(404, "Role not found.");
     }
