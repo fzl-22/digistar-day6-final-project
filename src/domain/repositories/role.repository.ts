@@ -31,6 +31,7 @@ class RoleRepository {
 
   async delete(roleId: string): Promise<boolean> {
     const result = await Role.deleteOne({ roleId: roleId });
+    await User.updateMany({role: roleId}, {$set: {role: null}});
     return result.deletedCount > 0;
   }
 
