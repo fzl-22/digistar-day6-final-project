@@ -4,6 +4,12 @@ import controllers from "../handlers/controllers/auth.controller";
 
 const router = Router();
 
-router.post("/register", validators.validateRegister(), controllers.register);
+router.post(
+  "/register",
+  validators.validateRegisterUser(),
+  controllers.registerUser
+);
+
+router.post("/login", validators.validateLoginUser(), controllers.loginUser);
 
 export default router;

@@ -6,7 +6,7 @@ import { userRepository } from "../repositories/user.repository";
 import { authRepository } from "../repositories/auth.repository";
 
 export class AuthUsecase {
-  static async register(userData: {
+  static async registerUser(userData: {
     username: string;
     firstName: string;
     lastName: string;
@@ -31,5 +31,13 @@ export class AuthUsecase {
     });
 
     return user;
+  }
+
+  static async loginUser(authData: {
+    email: string;
+    password: string;
+  }): Promise<{ user: IUser; token: string }> {
+    const result = await authRepository.login(authData);
+    return result;
   }
 }

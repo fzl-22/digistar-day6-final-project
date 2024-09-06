@@ -1,6 +1,6 @@
 import { body } from "express-validator";
 
-const validateRegister = () => {
+const validateRegisterUser = () => {
   return [
     body("username").trim().notEmpty().withMessage("Name is required"),
     body("firstName")
@@ -23,4 +23,11 @@ const validateRegister = () => {
   ];
 };
 
-export default { validateRegister };
+const validateLoginUser = () => {
+  return [
+    body("email").trim().notEmpty().isEmail().withMessage("Invalid email"),
+    body("password").trim().notEmpty().withMessage("Invalid password"),
+  ];
+};
+
+export default { validateRegisterUser, validateLoginUser };
