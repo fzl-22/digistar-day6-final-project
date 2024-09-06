@@ -72,39 +72,6 @@ const getUserById = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-type CreateUserBody = {
-  username: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  password: string;
-};
-const createUser = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      const error = new HttpError(422, "Validation error", errors.array());
-      throw error;
-    }
-
-    const body = req.body as CreateUserBody;
-    const user = await UserUsecase.createUser(body);
-
-    res.status(200).json({
-      message: "Successfully added user!",
-      data: {
-        user: {
-          ...user._doc,
-          _id: user._id.toString(),
-          password: undefined,
-        },
-      },
-    });
-  } catch (err) {
-    next(err);
-  }
-};
-
 type UpdateUserParams = { userId: string };
 type UpdateUserBody = {
   username?: string;
@@ -167,7 +134,6 @@ export default {
   getUsers,
   searchUsers,
   getUserById,
-  createUser,
   updateUser,
   deleteUser,
 };

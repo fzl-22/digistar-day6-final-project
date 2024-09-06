@@ -24,33 +24,6 @@ export class UserUsecase {
     return user;
   }
 
-  static async createUser(userData: {
-    username: string;
-    firstName: string;
-    lastName: string;
-    email: string;
-    password: string;
-  }): Promise<IUser> {
-    const duplicateUser = await userRepository.findDuplicates({
-      username: userData.username,
-      email: userData.email,
-    });
-    if (duplicateUser) {
-      throw new HttpError(
-        409,
-        "Email or username already exists. Please use another email or username."
-      );
-    }
-
-    const hashedPassword = await bcrypt.hash(userData.password, 12);
-    const user = await userRepository.add({
-      ...userData,
-      password: hashedPassword,
-    });
-
-    return user;
-  }
-
   static async updateUser(
     userId: string,
     userData: {

@@ -53,11 +53,6 @@ class UserRepository {
     return await User.find({ $or: queryConditions }).populate("role");
   }
 
-  async add(userData: Partial<IUser>): Promise<IUser> {
-    const user = new User(userData);
-    return (await user.save()).populate("role");
-  }
-
   async update(
     userId: string,
     updatedUser: UpdateQuery<IUser>

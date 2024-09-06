@@ -15,13 +15,7 @@ router.get(
   controllers.getUserById
 );
 
-router.post("/", validators.validateCreateUser(), controllers.createUser);
-
-router.put(
-  "/:userId",
-  validators.validateUpdateUser(),
-  controllers.updateUser
-);
+router.put("/:userId", validators.validateUpdateUser(), controllers.updateUser);
 
 router.delete(
   "/:userId",
