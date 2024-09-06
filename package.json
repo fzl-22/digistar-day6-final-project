@@ -1,5 +1,5 @@
 {
-  "name": "http-routing-and-restful-api",
+  "name": "json-web-token",
   "version": "1.0.0",
   "main": "app.js",
   "scripts": {
