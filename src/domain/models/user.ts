@@ -1,25 +1,19 @@
 import mongoose from "mongoose";
-import getUniqueId from "../../core/util/uuid";
-import { RoleDocument } from "./role";
+import { IRole } from "./role";
+import { IDocument } from "../../core/types/interfaces";
 
-interface UserDocument extends Document {
-  userId: string;
+interface IUser extends IDocument<IUser> {
+  _id: mongoose.Schema.Types.ObjectId;
   username: string;
   email: string;
   password: string;
-  role?: String | RoleDocument;
+  role?: String | IRole;
   createdAt: Date;
   updatedAt: Date;
 }
 
-const userSchema = new mongoose.Schema<UserDocument>(
+const userSchema = new mongoose.Schema<IUser>(
   {
-    userId: {
-      type: String,
-      required: true,
-      unique: true,
-      default: () => getUniqueId(),
-    },
     username: {
       type: String,
       required: true,
@@ -35,26 +29,16 @@ const userSchema = new mongoose.Schema<UserDocument>(
       required: true,
     },
     role: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Role",
       required: false,
       default: null,
     },
   },
   {
     timestamps: true,
-    toJSON: { virtuals: true },
-    toObject: { virtuals: true },
-    virtuals: true,
   }
 );
+const User = mongoose.model<IUser>("User", userSchema);
 
-userSchema.virtual("roles", {
-  ref: "Role",
-  localField: "role",
-  foreignField: "roleId",
-  justOne: true,
-});
-
-const User = mongoose.model<UserDocument>("User", userSchema);
-
-export { UserDocument, User };
+export { IUser, User };

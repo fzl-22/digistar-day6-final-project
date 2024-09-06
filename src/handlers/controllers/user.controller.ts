@@ -10,10 +10,9 @@ const getUsers = async (req: Request, res: Response, next: NextFunction) => {
     data: {
       users: users.map((user) => {
         return {
-          userId: user.userId,
-          username: user.username,
-          email: user.email,
-          role: user.role,
+          ...user._doc,
+          _id: user._id.toString(),
+          password: undefined,
         };
       }),
     },
@@ -32,10 +31,9 @@ const searchUsers = async (req: Request, res: Response, next: NextFunction) => {
       data: {
         users: users.map((user) => {
           return {
-            userId: user.userId,
-            username: user.username,
-            email: user.email,
-            role: user.role,
+            ...user._doc,
+            _id: user._id.toString(),
+            password: undefined,
           };
         }),
       },
@@ -63,10 +61,9 @@ const getUserById = async (req: Request, res: Response, next: NextFunction) => {
       message: "User found!",
       data: {
         user: {
-          userId: user.userId,
-          username: user.username,
-          email: user.email,
-          role: user.role,
+          ...user._doc,
+          _id: user._id.toString(),
+          password: undefined,
         },
       },
     });
@@ -91,10 +88,9 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
       message: "Successfully added user!",
       data: {
         user: {
-          userId: user.userId,
-          username: user.username,
-          email: user.email,
-          role: user.role,
+          ...user._doc,
+          _id: user._id.toString(),
+          password: undefined,
         },
       },
     });
@@ -105,7 +101,7 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
 
 type EditUserParams = { userId: string };
 type EditUserBody = { username?: string; email?: string };
-const updateUser =  async (req: Request, res: Response, next: NextFunction) => {
+const updateUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -118,16 +114,18 @@ const updateUser =  async (req: Request, res: Response, next: NextFunction) => {
     const userId = params.userId;
     const { username, email } = req.body as EditUserBody;
 
-    const user = await UserUsecase.updateUser(userId, {username: username, email: email});
+    const user = await UserUsecase.updateUser(userId, {
+      username: username,
+      email: email,
+    });
 
     res.status(200).json({
       message: "Succesully updated user",
       data: {
         user: {
-          userId: user.userId,
-          username: user.username,
-          email: user.email,
-          role: user.role,
+          ...user._doc,
+          _id: user._id.toString(),
+          password: undefined,
         },
       },
     });
@@ -136,7 +134,7 @@ const updateUser =  async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-type DeleteUserParams = { userId: string }
+type DeleteUserParams = { userId: string };
 const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const errors = validationResult(req);

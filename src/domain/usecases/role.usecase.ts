@@ -1,14 +1,14 @@
 import { HttpError } from "../../core/errors";
-import { RoleDocument } from "../models/role";
+import { IRole } from "../models/role";
 import { roleRepository } from "../repositories/role.repository";
 import { userRepository } from "../repositories/user.repository";
 
 export class RoleUsecase {
-  static async getRoles(): Promise<RoleDocument[]> {
+  static async getRoles(): Promise<IRole[]> {
     return await roleRepository.findAll();
   }
 
-  static async createRole(rolename: string): Promise<RoleDocument> {
+  static async createRole(rolename: string): Promise<IRole> {
     const isRoleExists = await roleRepository.findByName(rolename);
     if (isRoleExists) {
       throw new HttpError(
@@ -24,7 +24,7 @@ export class RoleUsecase {
   static async updateRole(
     roleId: string,
     roleData: { rolename?: string }
-  ): Promise<RoleDocument> {
+  ): Promise<IRole> {
     const isRoleExists = await roleRepository.findById(roleId);
     if (!isRoleExists) {
       throw new HttpError(404, "Role not found.");
@@ -34,7 +34,10 @@ export class RoleUsecase {
       const roleWithDuplicateName = await roleRepository.findByName(
         roleData.rolename
       );
-      if (roleWithDuplicateName && roleWithDuplicateName.roleId !== roleId) {
+      if (
+        roleWithDuplicateName &&
+        roleWithDuplicateName._id.toString() !== roleId
+      ) {
         throw new HttpError(409, "Role name already exists. Aborting.");
       }
     }

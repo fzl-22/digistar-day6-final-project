@@ -1,22 +1,22 @@
 import bcrypt from "bcryptjs";
 import { HttpError } from "../../core/errors";
-import { UserDocument } from "../models/user";
+import { IUser } from "../models/user";
 import { userRepository } from "../repositories/user.repository";
 
 export class UserUsecase {
-  static async getUsers(): Promise<UserDocument[]> {
+  static async getUsers(): Promise<IUser[]> {
     return await userRepository.findAll();
   }
 
   static async searchUsers(
     username?: string,
     email?: string
-  ): Promise<UserDocument[]> {
+  ): Promise<IUser[]> {
     const users = await userRepository.search(username, email);
     return users;
   }
 
-  static async getUserById(userId: string): Promise<UserDocument> {
+  static async getUserById(userId: string): Promise<IUser> {
     const user = await userRepository.findById(userId);
     if (!user) {
       throw new HttpError(404, "User not found.");
@@ -28,7 +28,7 @@ export class UserUsecase {
     username: string,
     email: string,
     password: string
-  ): Promise<UserDocument> {
+  ): Promise<IUser> {
     const isUserExists = await userRepository.isUserExists(username, email);
     if (isUserExists) {
       throw new HttpError(
@@ -50,7 +50,7 @@ export class UserUsecase {
   static async updateUser(
     userId: string,
     userData: { username?: string; email?: string }
-  ): Promise<UserDocument> {
+  ): Promise<IUser> {
     const isUserExists = await userRepository.findById(userId);
     if (!isUserExists) {
       throw new HttpError(404, "User not found.");
@@ -60,7 +60,7 @@ export class UserUsecase {
       const userWithDuplicateEmail = await userRepository.findByEmail(
         userData.email
       );
-      if (userWithDuplicateEmail && userWithDuplicateEmail.userId !== userId) {
+      if (userWithDuplicateEmail && userWithDuplicateEmail._id.toString() !== userId) {
         throw new HttpError(409, "Email already exists. Aborting.");
       }
     }
@@ -71,7 +71,7 @@ export class UserUsecase {
       );
       if (
         userWithDuplicateUsername &&
-        userWithDuplicateUsername.userId !== userId
+        userWithDuplicateUsername._id.toString() !== userId
       ) {
         throw new HttpError(409, "Username already exists. Aborting.");
       }

@@ -1,23 +1,24 @@
 import { UpdateQuery } from "mongoose";
-import { User, UserDocument } from "../models/user";
+import { User, IUser } from "../models/user";
+import { ObjectId } from "mongodb";
 
 class UserRepository {
-  async findAll(): Promise<UserDocument[]> {
+  async findAll(): Promise<IUser[]> {
     const users = await User.find().populate("role");
     return users;
   }
 
-  async findById(userId: string): Promise<UserDocument | null> {
-    const user = await User.findOne({ userId: userId }).populate("role");
+  async findById(userId: string): Promise<IUser | null> {
+    const user = await User.findById(userId).populate("role");
     return user;
   }
 
-  async findByEmail(email: string): Promise<UserDocument | null> {
+  async findByEmail(email: string): Promise<IUser | null> {
     const user = await User.findOne({ email: email }).populate("role");
     return user;
   }
 
-  async findByUsername(username: string): Promise<UserDocument | null> {
+  async findByUsername(username: string): Promise<IUser | null> {
     const user = await User.findOne({ username: username }).populate("role");
     return user;
   }
@@ -29,7 +30,7 @@ class UserRepository {
     return !!user;
   }
 
-  async search(username?: string, email?: string): Promise<UserDocument[]> {
+  async search(username?: string, email?: string): Promise<IUser[]> {
     const queryConditions: any[] = [];
 
     if (username) {
@@ -47,22 +48,22 @@ class UserRepository {
     return await User.find({ $or: queryConditions }).populate("role");
   }
 
-  async add(userData: Partial<UserDocument>): Promise<UserDocument> {
+  async add(userData: Partial<IUser>): Promise<IUser> {
     const user = new User(userData);
     return (await user.save()).populate("role");
   }
 
   async update(
     userId: string,
-    updatedUser: UpdateQuery<UserDocument>
-  ): Promise<UserDocument | null> {
-    return await User.findOneAndUpdate({ userId }, updatedUser, {
+    updatedUser: UpdateQuery<IUser>
+  ): Promise<IUser | null> {
+    return await User.findByIdAndUpdate(userId, updatedUser, {
       new: true,
     }).populate("role");
   }
 
   async delete(userId: string): Promise<boolean> {
-    const result = await User.deleteOne({ userId: userId });
+    const result = await User.deleteOne({ _id: new ObjectId(userId) });
     return result.deletedCount > 0;
   }
 }

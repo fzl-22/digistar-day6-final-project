@@ -1,30 +1,24 @@
 import mongoose from "mongoose";
-import getUniqueId from "../../core/util/uuid";
+import { IDocument } from "../../core/types/interfaces";
 
-interface RoleDocument extends Document {
-  roleId: string;
+interface IRole extends IDocument<IRole> {
+  _id: mongoose.Schema.Types.ObjectId;
   rolename: string;
   createdAt: Date;
   updatedAt: Date;
 }
 
-const roleSchema = new mongoose.Schema<RoleDocument>(
+const roleSchema = new mongoose.Schema<IRole>(
   {
-    roleId: {
-      type: String,
-      required: true,
-      default: () => getUniqueId(),
-      unique: true,
-    },
     rolename: {
       type: String,
       required: true,
       unique: true,
     },
   },
-  { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
+  { timestamps: true }
 );
 
-const Role = mongoose.model<RoleDocument>("Role", roleSchema);
+const Role = mongoose.model<IRole>("Role", roleSchema);
 
-export { RoleDocument, Role };
+export { IRole, Role };
