@@ -1,10 +1,9 @@
-# Assignment Day 4: Hacker Back End [Digistar Class 2024]
+# Assignment Day 5: Hacker Back End [Digistar Class 2024]
 
 | Name                | Class             |
 | ------------------- | ----------------- |
 | Ahmad Mu'min Faisal | Hacker Back End 9 |
 
-Recording Link: [https://bit.ly/digistar-2024-be4](https://bit.ly/digistar-2024-be4).
 
 ## How to run the project
 
