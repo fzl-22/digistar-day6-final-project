@@ -33,7 +33,7 @@ class AuthRepository {
   }
 
   private generateToken(user: IUser): string {
-    const token = jwt.sign({ userId: user._id }, JWT_SECRET_KEY, {
+    const token = jwt.sign({ userId: user._id.toString() }, JWT_SECRET_KEY, {
       expiresIn: "1h",
     });
     return token;
