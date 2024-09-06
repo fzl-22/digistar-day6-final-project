@@ -5,6 +5,7 @@ import { HttpError } from "../errors";
 import { JWT_SECRET_KEY } from "../config/env";
 import { IAuthenticatedRequest, IDecodedToken } from "../types/interfaces";
 import { User } from "../../domain/models/user";
+import { IRole } from "../../domain/models/role";
 
 const checkAuthMiddleware = async (
   req: IAuthenticatedRequest,
@@ -37,7 +38,12 @@ const checkAuthMiddleware = async (
       throw error;
     }
 
+    const isAdmin = authenticatedUser.role
+      ? (authenticatedUser.role as IRole).rolename == "admin"
+      : false;
+
     req.user = authenticatedUser;
+    req.isAdmin = isAdmin;
     next();
   } catch (err) {
     next(err);

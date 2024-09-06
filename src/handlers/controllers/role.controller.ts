@@ -2,8 +2,18 @@ import { NextFunction, Request, Response } from "express";
 import { RoleUsecase } from "../../domain/usecases/role.usecase";
 import { validationResult } from "express-validator";
 import { HttpError } from "../../core/errors";
+import { IAuthenticatedRequest } from "../../core/types/interfaces";
 
-const getRoles = async (req: Request, res: Response, next: NextFunction) => {
+const getRoles = async (
+  req: IAuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  if (!req.isAdmin) {
+    const error = new HttpError(403, "Forbidden!");
+    throw error;
+  }
+
   const roles = await RoleUsecase.getRoles();
   res.status(200).json({
     message: "Successfully fetched roles!",
@@ -14,11 +24,20 @@ const getRoles = async (req: Request, res: Response, next: NextFunction) => {
 };
 
 type CreateRoleBody = { rolename: string };
-const createRole = async (req: Request, res: Response, next: NextFunction) => {
+const createRole = async (
+  req: IAuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       const error = new HttpError(422, "Validation error", errors.array());
+      throw error;
+    }
+
+    if (!req.isAdmin) {
+      const error = new HttpError(403, "Forbidden!");
       throw error;
     }
 
@@ -38,11 +57,20 @@ const createRole = async (req: Request, res: Response, next: NextFunction) => {
 
 type UpdateRoleParams = { roleId: string };
 type UpdateRoleBody = { rolename?: string };
-const updateRole = async (req: Request, res: Response, next: NextFunction) => {
+const updateRole = async (
+  req: IAuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       const error = new HttpError(422, "Validation error", errors.array());
+      throw error;
+    }
+
+    if (!req.isAdmin) {
+      const error = new HttpError(403, "Forbidden!");
       throw error;
     }
 
@@ -63,11 +91,20 @@ const updateRole = async (req: Request, res: Response, next: NextFunction) => {
 };
 
 type DeleteRoleParams = { roleId: string };
-const deleteRole = async (req: Request, res: Response, next: NextFunction) => {
+const deleteRole = async (
+  req: IAuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       const error = new HttpError(422, "Validation error", errors.array());
+      throw error;
+    }
+
+    if (!req.isAdmin) {
+      const error = new HttpError(403, "Forbidden!");
       throw error;
     }
 
@@ -85,11 +122,20 @@ const deleteRole = async (req: Request, res: Response, next: NextFunction) => {
 
 type AssignRoleParams = { userId: string };
 type AssignRoleBody = { roleId: string };
-const assignRole = async (req: Request, res: Response, next: NextFunction) => {
+const assignRole = async (
+  req: IAuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       const error = new HttpError(422, "Validation error", errors.array());
+      throw error;
+    }
+
+    if (!req.isAdmin) {
+      const error = new HttpError(403, "Forbidden!");
       throw error;
     }
 
@@ -107,11 +153,20 @@ const assignRole = async (req: Request, res: Response, next: NextFunction) => {
 };
 
 type RevokeRoleParams = { userId: string };
-const revokeRole = async (req: Request, res: Response, next: NextFunction) => {
+const revokeRole = async (
+  req: IAuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       const error = new HttpError(422, "Validation error", errors.array());
+      throw error;
+    }
+
+    if (!req.isAdmin) {
+      const error = new HttpError(403, "Forbidden!");
       throw error;
     }
 
@@ -126,7 +181,6 @@ const revokeRole = async (req: Request, res: Response, next: NextFunction) => {
     next(err);
   }
 };
-
 
 export default {
   getRoles,

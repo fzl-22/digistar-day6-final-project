@@ -7,6 +7,7 @@ export interface IDocument<T> {
 
 export interface IAuthenticatedRequest extends Request {
   user?: IUser;
+  isAdmin?: boolean;
 }
 
 export interface IDecodedToken {

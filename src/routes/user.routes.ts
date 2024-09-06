@@ -2,25 +2,23 @@ import { Router } from "express";
 
 import controllers from "../handlers/controllers/user.controller";
 import validators from "../handlers/validators/user.validator";
+import checkAuthMiddleware from "../core/middlewares/check-auth.middleware";
 
 const router = Router();
 
-router.get("/", controllers.getUsers);
+router.get("/", checkAuthMiddleware, controllers.getUsers);
 
-router.get("/search", controllers.searchUsers);
+router.get("/search", checkAuthMiddleware, controllers.searchUsers);
 
-router.get(
+router.get("/:userId", checkAuthMiddleware, controllers.getUserById);
+
+router.put(
   "/:userId",
-  validators.validateGetUserById(),
-  controllers.getUserById
+  validators.validateUpdateUser(),
+  checkAuthMiddleware,
+  controllers.updateUser
 );
 
-router.put("/:userId", validators.validateUpdateUser(), controllers.updateUser);
-
-router.delete(
-  "/:userId",
-  validators.validateDeleteUser(),
-  controllers.deleteUser
-);
+router.delete("/:userId", checkAuthMiddleware, controllers.deleteUser);
 
 export default router;

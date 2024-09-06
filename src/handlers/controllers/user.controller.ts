@@ -2,26 +2,49 @@ import { validationResult } from "express-validator";
 import { NextFunction, Request, Response } from "express";
 import { HttpError } from "../../core/errors";
 import { UserUsecase } from "../../domain/usecases/user.usecase";
+import { IAuthenticatedRequest } from "../../core/types/interfaces";
 
-const getUsers = async (req: Request, res: Response, next: NextFunction) => {
-  const users = await UserUsecase.getUsers();
-  res.status(200).json({
-    message: "Successfully fetched data!",
-    data: {
-      users: users.map((user) => {
-        return {
-          ...user._doc,
-          _id: user._id.toString(),
-          password: undefined,
-        };
-      }),
-    },
-  });
+const getUsers = async (
+  req: IAuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    if (!req.isAdmin) {
+      const error = new HttpError(403, "Forbidden!");
+      throw error;
+    }
+
+    const users = await UserUsecase.getUsers();
+    res.status(200).json({
+      message: "Successfully fetched data!",
+      data: {
+        users: users.map((user) => {
+          return {
+            ...user._doc,
+            _id: user._id.toString(),
+            password: undefined,
+          };
+        }),
+      },
+    });
+  } catch (err) {
+    next(err);
+  }
 };
 
 type SearchUserQuery = { username?: string; email?: string };
-const searchUsers = async (req: Request, res: Response, next: NextFunction) => {
+const searchUsers = async (
+  req: IAuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+) => {
   try {
+    if (!req.isAdmin) {
+      const error = new HttpError(403, "Forbidden!");
+      throw error;
+    }
+
     const { username, email } = req.query as SearchUserQuery;
 
     const users = await UserUsecase.searchUsers(username, email);
@@ -44,7 +67,11 @@ const searchUsers = async (req: Request, res: Response, next: NextFunction) => {
 };
 
 type GetUserByIdParams = { userId: string };
-const getUserById = async (req: Request, res: Response, next: NextFunction) => {
+const getUserById = async (
+  req: IAuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -52,8 +79,11 @@ const getUserById = async (req: Request, res: Response, next: NextFunction) => {
       throw error;
     }
 
-    const params = req.params as GetUserByIdParams;
-    const userId = params.userId;
+    const userId = req.user!._id.toString();
+    if (userId !== (req.params as GetUserByIdParams).userId) {
+      const error = new HttpError(403, "Forbidden!");
+      throw error;
+    }
 
     const user = await UserUsecase.getUserById(userId);
 
@@ -79,7 +109,11 @@ type UpdateUserBody = {
   lastName?: string;
   email?: string;
 };
-const updateUser = async (req: Request, res: Response, next: NextFunction) => {
+const updateUser = async (
+  req: IAuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -87,9 +121,7 @@ const updateUser = async (req: Request, res: Response, next: NextFunction) => {
       throw error;
     }
 
-    const params = req.params as UpdateUserParams;
-
-    const userId = params.userId;
+    const userId = req.user!._id.toString();
     const body = req.body as UpdateUserBody;
 
     const user = await UserUsecase.updateUser(userId, body);
@@ -110,7 +142,11 @@ const updateUser = async (req: Request, res: Response, next: NextFunction) => {
 };
 
 type DeleteUserParams = { userId: string };
-const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
+const deleteUser = async (
+  req: IAuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -118,7 +154,11 @@ const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
       throw error;
     }
 
-    const { userId } = req.params as DeleteUserParams;
+    const userId = req.user!._id.toString();
+    if (userId !== (req.params as DeleteUserParams).userId) {
+      const error = new HttpError(403, "Forbidden!");
+      throw error;
+    }
 
     await UserUsecase.deleteUser(userId);
 
