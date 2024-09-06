@@ -5,6 +5,8 @@ import { IDocument } from "../../core/types/interfaces";
 interface IUser extends IDocument<IUser> {
   _id: mongoose.Schema.Types.ObjectId;
   username: string;
+  firstName: string;
+  lastName: string;
   email: string;
   password: string;
   role?: String | IRole;
@@ -18,6 +20,14 @@ const userSchema = new mongoose.Schema<IUser>(
       type: String,
       required: true,
       unique: true,
+    },
+    firstName: {
+      type: String,
+      required: true,
+    },
+    lastName: {
+      type: String,
+      required: true,
     },
     email: {
       type: String,

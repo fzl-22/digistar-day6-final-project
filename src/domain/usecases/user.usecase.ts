@@ -24,23 +24,27 @@ export class UserUsecase {
     return user;
   }
 
-  static async createUser(
-    username: string,
-    email: string,
-    password: string
-  ): Promise<IUser> {
-    const isUserExists = await userRepository.isUserExists(username, email);
-    if (isUserExists) {
+  static async createUser(userData: {
+    username: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    password: string;
+  }): Promise<IUser> {
+    const duplicateUser = await userRepository.findDuplicates({
+      username: userData.username,
+      email: userData.email,
+    });
+    if (duplicateUser) {
       throw new HttpError(
         409,
         "Email or username already exists. Please use another email or username."
       );
     }
 
-    const hashedPassword = await bcrypt.hash(password, 12);
+    const hashedPassword = await bcrypt.hash(userData.password, 12);
     const user = await userRepository.add({
-      username: username,
-      email: email,
+      ...userData,
       password: hashedPassword,
     });
 
@@ -49,38 +53,24 @@ export class UserUsecase {
 
   static async updateUser(
     userId: string,
-    userData: { username?: string; email?: string }
+    userData: {
+      username?: string;
+      firstName?: string;
+      lastName?: string;
+      email?: string;
+    }
   ): Promise<IUser> {
-    const isUserExists = await userRepository.findById(userId);
-    if (!isUserExists) {
+    const existingUser = await userRepository.findById(userId);
+    if (!existingUser) {
       throw new HttpError(404, "User not found.");
     }
 
-    if (userData.email) {
-      const userWithDuplicateEmail = await userRepository.findByEmail(
-        userData.email
-      );
-      if (userWithDuplicateEmail && userWithDuplicateEmail._id.toString() !== userId) {
-        throw new HttpError(409, "Email already exists. Aborting.");
-      }
+    const duplicateUser = await userRepository.findDuplicates(userData, userId);
+    if (duplicateUser) {
+      throw new HttpError(409, "Email or username already exists. Aborting.");
     }
 
-    if (userData.username) {
-      const userWithDuplicateUsername = await userRepository.findByUsername(
-        userData.username
-      );
-      if (
-        userWithDuplicateUsername &&
-        userWithDuplicateUsername._id.toString() !== userId
-      ) {
-        throw new HttpError(409, "Username already exists. Aborting.");
-      }
-    }
-
-    const updatedUser = await userRepository.update(userId, {
-      username: userData.username,
-      email: userData.email,
-    });
+    const updatedUser = await userRepository.update(userId, userData);
     if (!updatedUser) {
       throw new HttpError(400, "Failed to update user.");
     }

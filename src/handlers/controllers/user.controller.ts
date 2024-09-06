@@ -72,7 +72,13 @@ const getUserById = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-type CreateUserBody = { username: string; email: string; password: string };
+type CreateUserBody = {
+  username: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+};
 const createUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const errors = validationResult(req);
@@ -81,8 +87,8 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
       throw error;
     }
 
-    const { username, email, password } = req.body as CreateUserBody;
-    const user = await UserUsecase.createUser(username, email, password);
+    const body = req.body as CreateUserBody;
+    const user = await UserUsecase.createUser(body);
 
     res.status(200).json({
       message: "Successfully added user!",
@@ -99,8 +105,13 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-type EditUserParams = { userId: string };
-type EditUserBody = { username?: string; email?: string };
+type UpdateUserParams = { userId: string };
+type UpdateUserBody = {
+  username?: string;
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+};
 const updateUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const errors = validationResult(req);
@@ -109,15 +120,12 @@ const updateUser = async (req: Request, res: Response, next: NextFunction) => {
       throw error;
     }
 
-    const params = req.params as EditUserParams;
+    const params = req.params as UpdateUserParams;
 
     const userId = params.userId;
-    const { username, email } = req.body as EditUserBody;
+    const body = req.body as UpdateUserBody;
 
-    const user = await UserUsecase.updateUser(userId, {
-      username: username,
-      email: email,
-    });
+    const user = await UserUsecase.updateUser(userId, body);
 
     res.status(200).json({
       message: "Succesully updated user",

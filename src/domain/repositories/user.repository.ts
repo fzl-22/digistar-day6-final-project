@@ -13,21 +13,26 @@ class UserRepository {
     return user;
   }
 
-  async findByEmail(email: string): Promise<IUser | null> {
-    const user = await User.findOne({ email: email }).populate("role");
-    return user;
-  }
+  async findDuplicates(
+    criteria: { username?: string; email?: string },
+    excludeUserId?: string
+  ): Promise<IUser | null> {
+    const queryConditions: any[] = [];
+    if (criteria.username) {
+      queryConditions.push({ username: criteria.username });
+    }
+    if (criteria.email) {
+      queryConditions.push({ email: criteria.email });
+    }
+    if (queryConditions.length === 0) {
+      return null;
+    }
 
-  async findByUsername(username: string): Promise<IUser | null> {
-    const user = await User.findOne({ username: username }).populate("role");
-    return user;
-  }
-
-  async isUserExists(username: string, email: string): Promise<boolean> {
-    const user = await User.findOne({
-      $or: [{ username: username }, { email: email }],
-    });
-    return !!user;
+    const query: any = { $or: queryConditions };
+    if (excludeUserId) {
+      query._id = { $ne: new ObjectId(excludeUserId) };
+    }
+    return await User.findOne(query);
   }
 
   async search(username?: string, email?: string): Promise<IUser[]> {
