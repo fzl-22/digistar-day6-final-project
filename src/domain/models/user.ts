@@ -2,6 +2,16 @@ import mongoose from "mongoose";
 import { IRole } from "./role";
 import { IDocument } from "../../core/types/interfaces";
 
+interface CartItem {
+  productId: mongoose.Types.ObjectId;
+  quantity: number;
+}
+
+interface Cart {
+  items: CartItem[];
+  totalPrice: number;
+}
+
 interface IUser extends IDocument<IUser> {
   _id: mongoose.Schema.Types.ObjectId;
   username: string;
@@ -10,6 +20,7 @@ interface IUser extends IDocument<IUser> {
   email: string;
   password: string;
   role?: String | IRole;
+  cart: Cart;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -43,6 +54,29 @@ const userSchema = new mongoose.Schema<IUser>(
       ref: "Role",
       required: false,
       default: null,
+    },
+    cart: {
+      items: {
+        type: [
+          {
+            productId: {
+              type: mongoose.Schema.Types.ObjectId,
+              ref: "Product",
+              required: true,
+            },
+            quantity: {
+              type: Number,
+              required: true,
+            },
+          },
+        ],
+        default: [],
+      },
+      totalPrice: {
+        type: Number,
+        required: true,
+        default: 0,
+      },
     },
   },
   {

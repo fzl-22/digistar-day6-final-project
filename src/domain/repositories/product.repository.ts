@@ -7,6 +7,11 @@ class ProductRepository {
     return products;
   }
 
+  async findById(productId: string): Promise<IProduct | null>  {
+    const product = await Product.findById(productId);
+    return product;
+  }
+
   async create(productData: {
     productname: string;
     price: number;
