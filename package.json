@@ -1,5 +1,5 @@
 {
-  "name": "json-web-token",
+  "name": "final-project-be",
   "version": "1.0.0",
   "main": "app.js",
   "scripts": {
@@ -10,7 +10,7 @@
   },
   "author": "Ahmad Mu'min Faisal",
   "license": "ISC",
-  "description": "",
+  "description": "Final project of BE 9 class by Digistar Class 2024.",
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.2",
