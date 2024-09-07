@@ -21,6 +21,7 @@ interface IUser extends IDocument<IUser> {
   password: string;
   role?: String | IRole;
   cart: Cart;
+  address: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -77,6 +78,10 @@ const userSchema = new mongoose.Schema<IUser>(
         required: true,
         default: 0,
       },
+    },
+    address: {
+      type: String,
+      required: true,
     },
   },
   {

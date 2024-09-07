@@ -12,6 +12,7 @@ export class AuthUsecase {
     lastName: string;
     email: string;
     password: string;
+    address: string;
   }): Promise<IUser> {
     const duplicateUser = await userRepository.findDuplicates({
       username: userData.username,

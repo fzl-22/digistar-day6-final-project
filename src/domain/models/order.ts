@@ -12,6 +12,7 @@ interface IOrder extends mongoose.Document {
   items: IOrderItem[];
   totalPrice: number;
   status: "ready" | "paid" | "sent" | "received" | "completed";
+  address: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -48,6 +49,10 @@ const orderSchema = new mongoose.Schema<IOrder>(
       type: String,
       enum: ["ready", "paid", "sent", "received", "completed"],
       default: "ready",
+    },
+    address: {
+      type: String,
+      required: true,
     },
   },
   { timestamps: true }

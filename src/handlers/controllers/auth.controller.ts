@@ -9,6 +9,7 @@ type RegisterUserBody = {
   lastName: string;
   email: string;
   password: string;
+  address: string;
 };
 const registerUser = async (req: Request, res: Response, next: NextFunction) => {
   try {

@@ -72,6 +72,7 @@ class OrderRepository {
       items,
       totalPrice,
       status: "ready",
+      address: user.address,
     });
 
     await order.save();
@@ -83,7 +84,7 @@ class OrderRepository {
       });
     }
 
-    // Clear the user's cart after placing the order
+    // Clear the user's cart after order creation
     user.cart.items = [];
     user.cart.totalPrice = 0;
     await user.save();

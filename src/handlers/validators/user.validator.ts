@@ -13,6 +13,7 @@ const validateUpdateUser = () => {
     body("firstName").optional().trim(),
     body("lastName").optional().trim(),
     body("email").optional().trim().isEmail(),
+    body("address").optional().trim(),
   ];
 };
 

@@ -20,6 +20,7 @@ const validateRegisterUser = () => {
       .isAlphanumeric()
       .isLength({ min: 8, max: 16 })
       .withMessage("Invalid password"),
+    body("address").trim().notEmpty().withMessage("Address is required"),
   ];
 };
 

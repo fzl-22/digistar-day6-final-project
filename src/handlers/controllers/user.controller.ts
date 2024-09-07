@@ -65,7 +65,7 @@ const getUserById = async (
       throw error;
     }
 
-    const { userId } = req.params as UpdateUserParams;
+    const { userId } = req.params as GetUserByIdParams;
     if (!req.isAdmin && userId !== req.user!._id.toString()) {
       const error = new HttpError(403, "Forbidden!");
       throw error;
@@ -96,6 +96,7 @@ type UpdateUserBody = {
   firstName?: string;
   lastName?: string;
   email?: string;
+  address?: string;
 };
 const updateUser = async (
   req: IAuthenticatedRequest,

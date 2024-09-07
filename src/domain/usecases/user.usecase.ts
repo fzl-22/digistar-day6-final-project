@@ -31,6 +31,7 @@ export class UserUsecase {
       firstName?: string;
       lastName?: string;
       email?: string;
+      address?: string;
     }
   ): Promise<IUser> {
     const existingUser = await userRepository.findById(userId);
