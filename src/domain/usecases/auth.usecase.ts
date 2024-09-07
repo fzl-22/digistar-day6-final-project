@@ -35,7 +35,7 @@ export class AuthUsecase {
   }
 
   static async loginUser(authData: {
-    email: string;
+    emailOrUsername: string;
     password: string;
   }): Promise<{ user: IUser; token: string }> {
     const result = await authRepository.login(authData);

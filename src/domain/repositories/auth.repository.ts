@@ -12,10 +12,15 @@ class AuthRepository {
   }
 
   async login(authData: {
-    email: string;
+    emailOrUsername: string;
     password: string;
   }): Promise<{ user: IUser; token: string }> {
-    const user = await User.findOne({ email: authData.email });
+    const user = await User.findOne({
+      $or: [
+        { email: authData.emailOrUsername },
+        { username: authData.emailOrUsername },
+      ],
+    });
     if (!user) {
       throw new HttpError(401, "Invalid email or password.");
     }

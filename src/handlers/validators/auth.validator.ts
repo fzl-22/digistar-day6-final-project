@@ -26,7 +26,7 @@ const validateRegisterUser = () => {
 
 const validateLoginUser = () => {
   return [
-    body("email").trim().notEmpty().isEmail().withMessage("Invalid email"),
+    body("emailOrUsername").trim().notEmpty().withMessage("Invalid email"),
     body("password").trim().notEmpty().withMessage("Invalid password"),
   ];
 };

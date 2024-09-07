@@ -38,7 +38,7 @@ const registerUser = async (req: Request, res: Response, next: NextFunction) => 
 };
 
 type LoginUserBody = {
-  email: string;
+  emailOrUsername: string;
   password: string;
 };
 const loginUser = async (req: Request, res: Response, next: NextFunction) => {
