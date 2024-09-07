@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from "express";
+import { NextFunction, Response } from "express";
 import { RoleUsecase } from "../../domain/usecases/role.usecase";
 import { validationResult } from "express-validator";
 import { HttpError } from "../../core/errors";
@@ -9,11 +9,6 @@ const getRoles = async (
   res: Response,
   next: NextFunction
 ) => {
-  if (!req.isAdmin) {
-    const error = new HttpError(403, "Forbidden!");
-    throw error;
-  }
-
   const roles = await RoleUsecase.getRoles();
   res.status(200).json({
     message: "Successfully fetched roles!",
@@ -33,11 +28,6 @@ const createRole = async (
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       const error = new HttpError(422, "Validation error", errors.array());
-      throw error;
-    }
-
-    if (!req.isAdmin) {
-      const error = new HttpError(403, "Forbidden!");
       throw error;
     }
 
@@ -66,11 +56,6 @@ const updateRole = async (
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       const error = new HttpError(422, "Validation error", errors.array());
-      throw error;
-    }
-
-    if (!req.isAdmin) {
-      const error = new HttpError(403, "Forbidden!");
       throw error;
     }
 
@@ -103,11 +88,6 @@ const deleteRole = async (
       throw error;
     }
 
-    if (!req.isAdmin) {
-      const error = new HttpError(403, "Forbidden!");
-      throw error;
-    }
-
     const { roleId } = req.params as DeleteRoleParams;
 
     await RoleUsecase.deleteRole(roleId);
@@ -134,11 +114,6 @@ const assignRole = async (
       throw error;
     }
 
-    if (!req.isAdmin) {
-      const error = new HttpError(403, "Forbidden!");
-      throw error;
-    }
-
     const { userId } = req.params as AssignRoleParams;
     const { roleId } = req.body as AssignRoleBody;
 
@@ -162,11 +137,6 @@ const revokeRole = async (
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       const error = new HttpError(422, "Validation error", errors.array());
-      throw error;
-    }
-
-    if (!req.isAdmin) {
-      const error = new HttpError(403, "Forbidden!");
       throw error;
     }
 

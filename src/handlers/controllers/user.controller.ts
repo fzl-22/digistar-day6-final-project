@@ -4,17 +4,8 @@ import { HttpError } from "../../core/errors";
 import { UserUsecase } from "../../domain/usecases/user.usecase";
 import { IAuthenticatedRequest } from "../../core/types/interfaces";
 
-const getUsers = async (
-  req: IAuthenticatedRequest,
-  res: Response,
-  next: NextFunction
-) => {
+const getUsers = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    if (!req.isAdmin) {
-      const error = new HttpError(403, "Forbidden!");
-      throw error;
-    }
-
     const users = await UserUsecase.getUsers();
     res.status(200).json({
       message: "Successfully fetched data!",
@@ -40,11 +31,6 @@ const searchUsers = async (
   next: NextFunction
 ) => {
   try {
-    if (!req.isAdmin) {
-      const error = new HttpError(403, "Forbidden!");
-      throw error;
-    }
-
     const { username, email } = req.query as SearchUserQuery;
 
     const users = await UserUsecase.searchUsers(username, email);
@@ -66,7 +52,7 @@ const searchUsers = async (
   }
 };
 
-type GetUserByIdParams = { userId: string };
+type GetUserByIdParams = { userId: string }
 const getUserById = async (
   req: IAuthenticatedRequest,
   res: Response,
@@ -79,8 +65,8 @@ const getUserById = async (
       throw error;
     }
 
-    const userId = req.user!._id.toString();
-    if (userId !== (req.params as GetUserByIdParams).userId) {
+    const { userId } = req.params as UpdateUserParams;
+    if (!req.isAdmin && userId !== req.user!._id.toString()) {
       const error = new HttpError(403, "Forbidden!");
       throw error;
     }
@@ -102,7 +88,9 @@ const getUserById = async (
   }
 };
 
-type UpdateUserParams = { userId: string };
+type UpdateUserParams = {
+  userId: string;
+};
 type UpdateUserBody = {
   username?: string;
   firstName?: string;
@@ -121,7 +109,12 @@ const updateUser = async (
       throw error;
     }
 
-    const userId = req.user!._id.toString();
+    const { userId } = req.params as UpdateUserParams;
+    if (!req.isAdmin && userId !== req.user!._id.toString()) {
+      const error = new HttpError(403, "Forbidden!");
+      throw error;
+    }
+
     const body = req.body as UpdateUserBody;
 
     const user = await UserUsecase.updateUser(userId, body);
@@ -154,11 +147,7 @@ const deleteUser = async (
       throw error;
     }
 
-    const userId = req.user!._id.toString();
-    if (userId !== (req.params as DeleteUserParams).userId) {
-      const error = new HttpError(403, "Forbidden!");
-      throw error;
-    }
+    const { userId } = req.params as DeleteUserParams;
 
     await UserUsecase.deleteUser(userId);
 
