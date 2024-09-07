@@ -10,8 +10,9 @@ import roleRoutes from "./routes/role.routes";
 import productRoutes from "./routes/product.routes";
 import cartRoutes from "./routes/cart.routes";
 import orderRoutes from "./routes/order.routes";
-import errorHandlingMiddleware from "./core/middlewares/error-handling.middleware";
 import requestLoggingMiddleware from "./core/middlewares/request-logging.middleware";
+import notFoundMiddleware from "./core/middlewares/not-found.middleware";
+import errorHandlingMiddleware from "./core/middlewares/error-handling.middleware";
 import { PORT, HOST, MONGODB_URL } from "./core/config/env";
 
 const app = express();
@@ -27,6 +28,8 @@ app.use("/roles", roleRoutes);
 app.use("/products", productRoutes);
 app.use("/cart", cartRoutes);
 app.use("/orders", orderRoutes);
+
+app.use(notFoundMiddleware);
 
 app.use(errorHandlingMiddleware);
 
