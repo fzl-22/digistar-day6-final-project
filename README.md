@@ -1,4 +1,4 @@
-# Assignment Day 5: Hacker Back End [Digistar Class 2024]
+# Assignment Day 6: Hacker Back End [Digistar Class 2024]
 
 | Name                | Class             |
 | ------------------- | ----------------- |
